@@ -247,6 +247,17 @@
             const playLoginSound = () => synth.triggerAttackRelease("C4", "8n");
             const playMessageSound = () => synth.triggerAttackRelease("E3", "8n");
             
+            // MOBILE FIX: Ensure audio context is started by a user gesture.
+            let audioStarted = false;
+            function startAudio() {
+                if (!audioStarted) {
+                    Tone.start();
+                    audioStarted = true;
+                }
+            }
+            document.body.addEventListener('click', startAudio, { once: true });
+            document.body.addEventListener('touchstart', startAudio, { once: true });
+
             document.querySelectorAll('button:not(#login-btn), #free-fire-btn').forEach(btn => {
                 btn.addEventListener('click', playClickSound);
             });
@@ -398,7 +409,7 @@
             freeFireBtn.addEventListener('click', () => loginModal.classList.remove('hidden'));
             closeModalBtn.addEventListener('click', () => loginModal.classList.add('hidden'));
             closeUserMenuBtn.addEventListener('click', () => userMenuModal.classList.add('hidden'));
-            comingSoonBtns.forEach(btn => btn.addEventListener('click', () => showMessage('Coming Soon!')));
+            comingSoonBtns.forEach(btn => btn.addEventListener('click', () => { playClickSound(); showMessage('Coming Soon!'); }));
             
             loginBtn.addEventListener('click', () => {
                 const playerId = playerIdInput.value.trim();
