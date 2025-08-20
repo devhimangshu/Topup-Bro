@@ -24,7 +24,7 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif; /* Reverted to normal font */
+            font-family: 'Inter', sans-serif;
             background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1c3d52);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
@@ -50,11 +50,6 @@
         .text-glow {
             text-shadow: 0 0 8px var(--primary-glow);
         }
-
-        .bonus-text {
-            color: var(--primary-glow);
-            text-shadow: 0 0 10px var(--primary-glow);
-        }
         
         .btn-purchase {
             background: rgba(0, 246, 255, 0.1);
@@ -71,13 +66,15 @@
             transform: translateY(-2px);
         }
         
-        .offer-box {
-            display: inline-block;
-            border: 1px solid rgba(0, 246, 255, 0.4);
-            padding: 0.15rem 0.5rem;
-            border-radius: 0.5rem;
-            background: rgba(0, 246, 255, 0.05);
-            font-size: 0.8em;
+        /* Item Box Styles */
+        .item-box {
+            border: 2px solid rgba(0, 246, 255, 0.2);
+            transition: all 0.2s ease-in-out;
+        }
+        .item-box.selected {
+            border-color: var(--primary-glow);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 246, 255, 0.3);
         }
 
         /* Carousel Styles */
@@ -97,10 +94,14 @@
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
+        /* Sticky Footer Animation */
+        .sticky-footer-container {
+            transition: transform 0.3s ease-in-out;
+        }
     </style>
 </head>
 <body class="text-white">
-<div class="max-w-md mx-auto relative">
+<div class="max-w-md mx-auto pb-24"> <!-- Added padding-bottom to prevent content from being hidden by sticky footer -->
     <!-- Sticky Header Section -->
     <header class="sticky top-0 z-50 glass-container">
         <div class="mx-auto p-3 flex justify-between items-center">
@@ -160,30 +161,48 @@
 
     <!-- Main Content: Top-Up List -->
     <div id="top-up-list" class="mx-auto p-2 pb-12 hidden">
-        <div class="glass-container">
-            <div class="p-3 border-b border-[var(--primary-glow)]/20"><h2 class="text-md font-bold text-glow">Pay Using UPI</h2></div>
-            <ul class="divide-y divide-[var(--primary-glow)]/20">
-                <li class="p-3 flex justify-between items-center"><div class="flex items-center"><img src="https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png" class="h-8 mr-3" alt="Diamond Icon"/><div><p class="text-xs text-gray-300">Diamond</p><p class="font-semibold text-sm text-glow">100 <span class="offer-box bonus-text font-normal ml-1">+ 100 diamond</span></p></div></div><a href="upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=80&cu=INR&tn=gshopindia"><button class="btn-purchase font-bold py-1 px-2 rounded-md w-20 h-9 text-sm">₹80</button></a></li>
-                <li class="p-3 flex justify-between items-center"><div class="flex items-center"><img src="https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png" class="h-8 mr-3" alt="Diamond Icon"/><div><p class="text-xs text-gray-300">Diamond</p><p class="font-semibold text-sm text-glow">310 <span class="offer-box bonus-text font-normal ml-1">+ 310 diamond</span></p></div></div><a href="upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=240&cu=INR&tn=gshopindia"><button class="btn-purchase font-bold py-1 px-2 rounded-md w-20 h-9 text-sm">₹240</button></a></li>
-                <li class="p-3 flex justify-between items-center"><div class="flex items-center"><img src="https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png" class="h-8 mr-3" alt="Diamond Icon"/><div><p class="text-xs text-gray-300">Diamond</p><p class="font-semibold text-sm text-glow">520 <span class="offer-box bonus-text font-normal ml-1">+ 520 diamond</span></p></div></div><a href="upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=400&cu=INR&tn=gshopindia"><button class="btn-purchase font-bold py-1 px-2 rounded-md w-20 h-9 text-sm">₹400</button></a></li>
-                <li class="p-3 flex justify-between items-center"><div class="flex items-center"><img src="https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png" class="h-8 mr-3" alt="Diamond Icon"/><div><p class="text-xs text-gray-300">Diamond</p><p class="font-semibold text-sm text-glow">1,060 <span class="offer-box bonus-text font-normal ml-1">+ 1,060 diamond</span></p></div></div><a href="upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=800&cu=INR&tn=gshopindia"><button class="btn-purchase font-bold py-1 px-2 rounded-md w-20 h-9 text-sm">₹800</button></a></li>
-                <li class="p-3 flex justify-between items-center"><div class="flex items-center"><img src="https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png" class="h-8 mr-3" alt="Diamond Icon"/><div><p class="text-xs text-gray-300">Diamond</p><p class="font-semibold text-sm text-glow">2,180 <span class="offer-box bonus-text font-normal ml-1">+ 2,180 diamond</span></p></div></div><a href="upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=1600&cu=INR&tn=gshopindia"><button class="btn-purchase font-bold py-1 px-2 rounded-md w-20 h-9 text-sm">₹1,600</button></a></li>
-                <li class="p-3 flex justify-between items-center"><div class="flex items-center"><img src="https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png" class="h-8 mr-3" alt="Diamond Icon"/><div><p class="text-xs text-gray-300">Diamond</p><p class="font-semibold text-sm text-glow">5,600 <span class="offer-box bonus-text font-normal ml-1">+ 5,600 diamond</span></p></div></div><a href="upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=4000&cu=INR&tn=gshopindia"><button class="btn-purchase font-bold py-1 px-2 rounded-md w-20 h-9 text-sm">₹4,000</button></a></li>
-                <li class="p-3 flex justify-between items-center"><div class="flex items-center"><img src="https://html-generator.com/uploads/images/2021/12/12/69338PCBY_LHZ1K.png" class="h-8 mr-3" alt="Voucher Icon"/><div><p class="text-xs text-gray-300">Voucher</p><p class="font-semibold text-sm text-glow">Weekly Membership</p></div></div><a href="upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=159&cu=INR&tn=gshopindia"><button class="btn-purchase font-bold py-1 px-2 rounded-md w-20 h-9 text-sm">₹159</button></a></li>
-                <li class="p-3 flex justify-between items-center"><div class="flex items-center"><img src="https://html-generator.com/uploads/images/2021/12/12/69338PCBY_LHZ1K.png" class="h-8 mr-3" alt="Voucher Icon"/><div><p class="text-xs text-gray-300">Voucher</p><p class="font-semibold text-sm text-glow">Monthly Membership</p></div></div><a href="upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=799&cu=INR&tn=gshopindia"><button class="btn-purchase font-bold py-1 px-2 rounded-md w-20 h-9 text-sm">₹799</button></a></li>
-            </ul>
+        <div class="glass-container p-4">
+            <h2 class="text-md font-bold text-glow mb-4">Select Top-Up Amount</h2>
+            <div id="item-grid" class="grid grid-cols-2 gap-3">
+                <!-- Items will be injected by JS -->
+            </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="footer-dark text-center py-4"><div class="space-y-3"><div><a href="#" class="px-2 text-xs hover:text-white transition-colors">Customer Support</a></div><hr class="border-gray-500/30 max-w-xs mx-auto"><p class="text-xs px-4">&copy; Garena Online. Trademarks belong to their respective owners. All rights reserved.</p><div class="text-xs space-x-3"><a href="#" class="hover:text-white transition-colors">FAQ</a><a href="#" class="hover:text-white transition-colors">Terms and Conditions</a><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></div></div></footer>
+    <footer id="main-footer" class="text-center py-4"><div class="space-y-3"><div><a href="#" class="px-2 text-xs hover:text-white transition-colors">Customer Support</a></div><hr class="border-gray-500/30 max-w-xs mx-auto"><p class="text-xs px-4">&copy; Garena Online. Trademarks belong to their respective owners. All rights reserved.</p><div class="text-xs space-x-3"><a href="#" class="hover:text-white transition-colors">FAQ</a><a href="#" class="hover:text-white transition-colors">Terms and Conditions</a><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></div></div></footer>
 </div>
 
+<!-- Sticky Footer for Selection -->
+<div id="sticky-footer" class="sticky-footer-container fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md p-2 z-40 transform translate-y-full">
+    <div class="glass-container p-3 flex justify-between items-center">
+        <div>
+            <p id="footer-product-name" class="font-bold text-sm"></p>
+            <p id="footer-product-price" class="text-xs text-gray-300"></p>
+        </div>
+        <a href="#" id="buy-now-link">
+            <button id="buy-now-btn" class="btn-purchase font-bold py-2 px-6 text-sm">Buy Now</button>
+        </a>
+    </div>
+</div>
+
+
 <!-- Player ID Login Modal -->
-<div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden"><div class="glass-container w-full max-w-sm"><div class="p-4 border-b border-[var(--primary-glow)]/20 flex justify-between items-center"><h3 class="text-lg font-bold text-glow">Enter Player ID</h3><button id="close-modal-btn" class="text-gray-300 hover:text-white text-2xl">&times;</button></div><div class="p-6 space-y-4"><p id="login-error" class="text-red-400 text-sm hidden">Player ID must be 10 digits.</p><input id="player-id-input" type="number" placeholder="Please enter your Player ID" class="w-full bg-black/20 border border-gray-500/50 rounded-lg p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary-glow)]"><button id="login-btn" class="w-full btn-purchase font-bold py-3 rounded-lg">Login</button></div></div></div>
+<div id="login-modal" class="fixed inset-0 z-[110] flex items-center justify-center p-4 modal-backdrop hidden"><div class="glass-container w-full max-w-sm"><div class="p-4 border-b border-[var(--primary-glow)]/20 flex justify-between items-center"><h3 class="text-lg font-bold text-glow">Enter Player ID</h3><button id="close-modal-btn" class="text-gray-300 hover:text-white text-2xl">&times;</button></div><div class="p-6 space-y-4"><p id="login-error" class="text-red-400 text-sm hidden">Player ID must be 10 digits.</p><input id="player-id-input" type="number" placeholder="Please enter your Player ID" class="w-full bg-black/20 border border-gray-500/50 rounded-lg p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary-glow)]"><button id="login-btn" class="w-full btn-purchase font-bold py-3 rounded-lg">Login</button></div></div></div>
+
+<!-- User Menu Modal -->
+<div id="user-menu-modal" class="fixed inset-0 z-[110] flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="glass-container w-full max-w-sm">
+        <div class="p-4 border-b border-[var(--primary-glow)]/20 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-glow">Player Info</h3>
+            <button id="close-user-menu-btn" class="text-gray-300 hover:text-white text-2xl">&times;</button>
+        </div>
+        <div id="user-menu-content" class="p-6 space-y-4 text-sm"></div>
+    </div>
+</div>
 
 <!-- Message Popup -->
-<div id="message-popup" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden message-popup opacity-0 transform scale-95"><div class="glass-container p-4 text-center"><p id="message-popup-text"></p></div></div>
+<div id="message-popup" class="fixed top-20 left-1/2 -translate-x-1/2 z-[110] hidden message-popup opacity-0 transform scale-95"><div class="glass-container p-4 text-center"><p id="message-popup-text"></p></div></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -193,7 +212,6 @@
             const playLoginSound = () => synth.triggerAttackRelease("C4", "8n");
             const playMessageSound = () => synth.triggerAttackRelease("E3", "8n");
             
-            // Note the :not(#login-btn) to prevent double sound on login
             document.querySelectorAll('button:not(#login-btn), .coming-soon-btn, #free-fire-btn').forEach(btn => {
                 btn.addEventListener('click', playClickSound);
             });
@@ -213,8 +231,72 @@
             const bannerCarousel = document.getElementById('banner-carousel');
             const gameBanner = document.getElementById('game-banner');
             const loginError = document.getElementById('login-error');
-            
+            const userMenuModal = document.getElementById('user-menu-modal');
+            const userMenuContent = document.getElementById('user-menu-content');
+            const closeUserMenuBtn = document.getElementById('close-user-menu-btn');
+            const mainFooter = document.getElementById('main-footer');
+            const stickyFooter = document.getElementById('sticky-footer');
+            const footerProductName = document.getElementById('footer-product-name');
+            const footerProductPrice = document.getElementById('footer-product-price');
+            const buyNowLink = document.getElementById('buy-now-link');
+            const itemGrid = document.getElementById('item-grid');
+
             let defaultUserIconHTML = userIconContainer.innerHTML;
+
+            const itemsData = [
+                { name: '100 + 100 Diamond', price: '₹80', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=80&cu=INR&tn=gshopindia' },
+                { name: '310 + 310 Diamond', price: '₹240', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=240&cu=INR&tn=gshopindia' },
+                { name: '520 + 520 Diamond', price: '₹400', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=400&cu=INR&tn=gshopindia' },
+                { name: '1060 + 1060 Diamond', price: '₹800', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=800&cu=INR&tn=gshopindia' },
+                { name: '2180 + 2180 Diamond', price: '₹1,600', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=1600&cu=INR&tn=gshopindia' },
+                { name: '5600 + 5600 Diamond', price: '₹4,000', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=4000&cu=INR&tn=gshopindia' },
+                { name: 'Weekly Membership', price: '₹159', type: 'Voucher', icon: 'https://html-generator.com/uploads/images/2021/12/12/69338PCBY_LHZ1K.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=159&cu=INR&tn=gshopindia' },
+                { name: 'Monthly Membership', price: '₹799', type: 'Voucher', icon: 'https://html-generator.com/uploads/images/2021/12/12/69338PCBY_LHZ1K.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=799&cu=INR&tn=gshopindia' },
+            ];
+
+            function populateItems() {
+                itemGrid.innerHTML = '';
+                itemsData.forEach(item => {
+                    const itemBox = document.createElement('div');
+                    itemBox.className = 'item-box p-2 rounded-lg text-center cursor-pointer transition-all';
+                    itemBox.dataset.name = item.name;
+                    itemBox.dataset.price = item.price;
+                    itemBox.dataset.link = item.link;
+                    itemBox.innerHTML = `
+                        <img src="${item.icon}" class="h-8 mx-auto mb-1">
+                        <p class="font-semibold text-xs text-glow">${item.name.replace('Diamond', '').replace('Membership', '')}</p>
+                        <p class="text-xs text-gray-400">${item.type}</p>
+                        <div class="mt-2 bg-cyan-900/50 text-cyan-300 text-xs font-bold py-1 rounded-md">${item.price}</div>
+                    `;
+                    itemGrid.appendChild(itemBox);
+                });
+                initializeItemSelection();
+            }
+
+            function initializeItemSelection() {
+                const itemBoxes = document.querySelectorAll('.item-box');
+                let selectedItem = null;
+
+                itemBoxes.forEach(box => {
+                    box.addEventListener('click', () => {
+                        if (selectedItem === box) {
+                            box.classList.remove('selected');
+                            selectedItem = null;
+                            stickyFooter.style.transform = 'translateY(100%)';
+                        } else {
+                            itemBoxes.forEach(b => b.classList.remove('selected'));
+                            box.classList.add('selected');
+                            selectedItem = box;
+                            
+                            footerProductName.textContent = box.dataset.name;
+                            footerProductPrice.textContent = box.dataset.price;
+                            buyNowLink.href = box.dataset.link;
+                            stickyFooter.style.transform = 'translateY(0)';
+                        }
+                    });
+                });
+            }
+
 
             function showMessage(text, duration = 2000) {
                 playMessageSound();
@@ -226,6 +308,7 @@
 
             freeFireBtn.addEventListener('click', () => loginModal.classList.remove('hidden'));
             closeModalBtn.addEventListener('click', () => loginModal.classList.add('hidden'));
+            closeUserMenuBtn.addEventListener('click', () => userMenuModal.classList.add('hidden'));
             comingSoonBtns.forEach(btn => btn.addEventListener('click', () => showMessage('Coming Soon!')));
             
             loginBtn.addEventListener('click', () => {
@@ -237,8 +320,10 @@
                     loginModal.classList.add('hidden');
                     gameSelection.classList.add('hidden');
                     bannerCarousel.classList.add('hidden');
+                    mainFooter.classList.add('hidden');
                     gameBanner.classList.remove('hidden');
                     topUpList.classList.remove('hidden');
+                    populateItems();
                     updateUserMenu(playerId);
                 } else {
                     loginError.classList.remove('hidden');
@@ -247,22 +332,31 @@
             });
 
             function updateUserMenu(playerId) {
-                const userMenuHTML = `
-                    <div id="logged-in-icon" class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-700/50 border border-green-400/50 cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></div>
-                    <div id="user-dropdown" class="absolute top-full right-0 mt-2 w-56 glass-container hidden text-sm p-2 z-50"><div class="p-2 space-y-1"><p class="text-xs text-gray-400">Player ID:</p><p class="font-bold truncate">${playerId}</p></div><div class="border-t border-[var(--primary-glow)]/20 my-1"></div><div class="p-2 space-y-1"><p class="text-xs text-gray-400">Server:</p><div class="flex items-center"><svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_303_3)"><path d="M0 0H24V24H0V0Z" fill="white" fill-opacity="0.01"/><path d="M21 2H3C2.44772 2 2 2.44772 2 3V21C2 21.5523 2.44772 22 3 22H21C21.5523 22 22 21.5523 22 21V3C22 2.44772 21.5523 2 21 2Z" fill="#F0F0F0"/><path d="M21 2H3C2.44772 2 2 2.44772 2 3V8H22V3C22 2.44772 21.5523 2 21 2Z" fill="#FF9933"/><path d="M2 16H22V21C22 21.5523 21.5523 22 21 22H3C2.44772 22 2 21.5523 2 21V16Z" fill="#128807"/><path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="#000080" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="clip0_303_3"><rect width="24" height="24" fill="white"/></clipPath></defs></svg><span>India</span></div></div><div class="border-t border-[var(--primary-glow)]/20 my-1"></div><button id="logout-btn" class="w-full text-left p-2 text-red-400 hover:bg-white/10 rounded-md">Logout</button></div>`;
-                userIconContainer.innerHTML = userMenuHTML;
-                const loggedInIcon = document.getElementById('logged-in-icon');
-                const userDropdown = document.getElementById('user-dropdown');
-                loggedInIcon.addEventListener('click', (e) => { e.stopPropagation(); userDropdown.classList.toggle('hidden'); });
-                document.addEventListener('click', () => userDropdown.classList.add('hidden'));
-                
-                const logoutButton = document.getElementById('logout-btn');
-                logoutButton.addEventListener('click', logout);
-                logoutButton.addEventListener('click', playClickSound); // Add sound for logout button
+                const loggedInIconHTML = `<div id="logged-in-icon" class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-700/50 border border-green-400/50 cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></div>`;
+                userIconContainer.innerHTML = loggedInIconHTML;
+
+                const userMenuContentHTML = `
+                    <div class="space-y-1"><p class="text-xs text-gray-400">Player ID:</p><p class="font-bold truncate">${playerId}</p></div>
+                    <div class="border-t border-[var(--primary-glow)]/20 my-3"></div>
+                    <div class="space-y-1"><p class="text-xs text-gray-400">Server:</p><div class="flex items-center"><svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_303_3)"><path d="M0 0H24V24H0V0Z" fill="white" fill-opacity="0.01"/><path d="M21 2H3C2.44772 2 2 2.44772 2 3V21C2 21.5523 2.44772 22 3 22H21C21.5523 22 22 21.5523 22 21V3C22 2.44772 21.5523 2 21 2Z" fill="#F0F0F0"/><path d="M21 2H3C2.44772 2 2 2.44772 2 3V8H22V3C22 2.44772 21.5523 2 21 2Z" fill="#FF9933"/><path d="M2 16H22V21C22 21.5523 21.5523 22 21 22H3C2.44772 22 2 21.5523 2 21V16Z" fill="#128807"/><path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="#000080" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="clip0_303_3"><rect width="24" height="24" fill="white"/></clipPath></defs></svg><span>India</span></div></div>
+                    <div class="border-t border-[var(--primary-glow)]/20 my-3"></div>
+                    <button id="logout-btn" class="w-full text-center p-2 text-red-400 hover:bg-white/10 rounded-md border border-red-400/50">Logout</button>`;
+                userMenuContent.innerHTML = userMenuContentHTML;
+
+                document.getElementById('logged-in-icon').addEventListener('click', () => userMenuModal.classList.remove('hidden'));
+                document.getElementById('logout-btn').addEventListener('click', logout);
             }
 
             function logout() {
-                topUpList.classList.add('hidden'); gameBanner.classList.add('hidden'); gameSelection.classList.remove('hidden'); bannerCarousel.classList.remove('hidden'); userIconContainer.innerHTML = defaultUserIconHTML; playerIdInput.value = '';
+                userMenuModal.classList.add('hidden');
+                topUpList.classList.add('hidden'); 
+                gameBanner.classList.add('hidden'); 
+                gameSelection.classList.remove('hidden'); 
+                bannerCarousel.classList.remove('hidden'); 
+                mainFooter.classList.remove('hidden');
+                stickyFooter.style.transform = 'translateY(100%)';
+                userIconContainer.innerHTML = defaultUserIconHTML; 
+                playerIdInput.value = '';
             }
 
             // Carousel Logic
