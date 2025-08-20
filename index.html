@@ -15,6 +15,9 @@
     
     <!-- Tone.js for Sound Effects -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    
+    <!-- QR Code Generation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         :root {
@@ -45,6 +48,14 @@
             border: 1px solid rgba(0, 246, 255, 0.2);
             box-shadow: 0 0 20px rgba(0, 246, 255, 0.1);
             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+        }
+        
+        .footer-glass-container {
+             background: var(--container-bg);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 246, 255, 0.1);
         }
         
         .text-glow {
@@ -97,6 +108,12 @@
         /* Sticky Footer Animation */
         .sticky-footer-container {
             transition: transform 0.3s ease-in-out;
+        }
+        
+        #qrcode-container {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -174,15 +191,16 @@
 </div>
 
 <!-- Sticky Footer for Selection -->
-<div id="sticky-footer" class="sticky-footer-container fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md p-2 z-40 transform translate-y-full">
-    <div class="glass-container p-3 flex justify-between items-center">
-        <div>
-            <p id="footer-product-name" class="font-bold text-sm"></p>
-            <p id="footer-product-price" class="text-xs text-gray-300"></p>
+<div id="sticky-footer" class="sticky-footer-container fixed bottom-0 left-0 w-full z-40 transform translate-y-full">
+    <div class="footer-glass-container max-w-md mx-auto rounded-lg p-3 m-2 flex justify-between items-center">
+        <div class="flex items-center">
+            <img id="footer-product-icon" src="" class="h-8 mr-3" alt="Item Icon">
+            <div>
+                <p id="footer-product-name" class="font-bold text-sm"></p>
+                <p id="footer-product-price" class="text-xs text-gray-300"></p>
+            </div>
         </div>
-        <a href="#" id="buy-now-link">
-            <button id="buy-now-btn" class="btn-purchase font-bold py-2 px-6 text-sm">Buy Now</button>
-        </a>
+        <button id="buy-now-btn" class="btn-purchase font-bold py-2 px-6 text-sm">Buy Now</button>
     </div>
 </div>
 
@@ -201,6 +219,23 @@
     </div>
 </div>
 
+<!-- Payment Modal -->
+<div id="payment-modal" class="fixed inset-0 z-[110] flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="glass-container w-full max-w-sm text-center">
+        <div class="p-4 border-b border-[var(--primary-glow)]/20 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-glow">Complete Payment</h3>
+            <button id="close-payment-modal-btn" class="text-gray-300 hover:text-white text-2xl">&times;</button>
+        </div>
+        <div class="p-6 space-y-3">
+            <div id="order-details" class="text-left text-xs space-y-2 mb-4"></div>
+            <div id="qrcode-container" class="w-48 h-48 mx-auto flex items-center justify-center"></div>
+            <p class="text-sm">Scan the QR code with your UPI app</p>
+            <div id="payment-timer" class="text-2xl font-bold text-[var(--primary-glow)]">05:00</div>
+            <p class="text-xs text-gray-400">This code will expire in 5 minutes.</p>
+        </div>
+    </div>
+</div>
+
 <!-- Message Popup -->
 <div id="message-popup" class="fixed top-20 left-1/2 -translate-x-1/2 z-[110] hidden message-popup opacity-0 transform scale-95"><div class="glass-container p-4 text-center"><p id="message-popup-text"></p></div></div>
 
@@ -212,7 +247,7 @@
             const playLoginSound = () => synth.triggerAttackRelease("C4", "8n");
             const playMessageSound = () => synth.triggerAttackRelease("E3", "8n");
             
-            document.querySelectorAll('button:not(#login-btn), .coming-soon-btn, #free-fire-btn').forEach(btn => {
+            document.querySelectorAll('button:not(#login-btn), #free-fire-btn').forEach(btn => {
                 btn.addEventListener('click', playClickSound);
             });
 
@@ -238,30 +273,36 @@
             const stickyFooter = document.getElementById('sticky-footer');
             const footerProductName = document.getElementById('footer-product-name');
             const footerProductPrice = document.getElementById('footer-product-price');
-            const buyNowLink = document.getElementById('buy-now-link');
+            const footerProductIcon = document.getElementById('footer-product-icon');
+            const buyNowBtn = document.getElementById('buy-now-btn');
             const itemGrid = document.getElementById('item-grid');
+            const paymentModal = document.getElementById('payment-modal');
+            const closePaymentModalBtn = document.getElementById('close-payment-modal-btn');
+            const qrcodeContainer = document.getElementById('qrcode-container');
+            const paymentTimerDisplay = document.getElementById('payment-timer');
+            const orderDetails = document.getElementById('order-details');
 
             let defaultUserIconHTML = userIconContainer.innerHTML;
+            let loggedInPlayerId = null;
+            let paymentTimerInterval;
 
             const itemsData = [
-                { name: '100 + 100 Diamond', price: '₹80', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=80&cu=INR&tn=gshopindia' },
-                { name: '310 + 310 Diamond', price: '₹240', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=240&cu=INR&tn=gshopindia' },
-                { name: '520 + 520 Diamond', price: '₹400', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=400&cu=INR&tn=gshopindia' },
-                { name: '1060 + 1060 Diamond', price: '₹800', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=800&cu=INR&tn=gshopindia' },
-                { name: '2180 + 2180 Diamond', price: '₹1,600', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=1600&cu=INR&tn=gshopindia' },
-                { name: '5600 + 5600 Diamond', price: '₹4,000', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=4000&cu=INR&tn=gshopindia' },
-                { name: 'Weekly Membership', price: '₹159', type: 'Voucher', icon: 'https://html-generator.com/uploads/images/2021/12/12/69338PCBY_LHZ1K.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=159&cu=INR&tn=gshopindia' },
-                { name: 'Monthly Membership', price: '₹799', type: 'Voucher', icon: 'https://html-generator.com/uploads/images/2021/12/12/69338PCBY_LHZ1K.png', link: 'upi://pay?pa=Q024832912@ybl&pn=Gshopindia&am=799&cu=INR&tn=gshopindia' },
+                { name: '100 + 100 Diamond', displayName: '100 Diamond', price: '₹80', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png' },
+                { name: '310 + 310 Diamond', displayName: '310 Diamond', price: '₹240', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png' },
+                { name: '520 + 520 Diamond', displayName: '520 Diamond', price: '₹400', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png' },
+                { name: '1060 + 1060 Diamond', displayName: '1060 Diamond', price: '₹800', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png' },
+                { name: '2180 + 2180 Diamond', displayName: '2180 Diamond', price: '₹1,600', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png' },
+                { name: '5600 + 5600 Diamond', displayName: '5600 Diamond', price: '₹4,000', type: 'Diamond', icon: 'https://cdngarenanow-a.akamaihd.net/gop/app/0000/100/067/point.png' },
+                { name: 'Weekly Membership', displayName: 'Weekly Membership', price: '₹159', type: 'Voucher', icon: 'https://html-generator.com/uploads/images/2021/12/12/69338PCBY_LHZ1K.png' },
+                { name: 'Monthly Membership', displayName: 'Monthly Membership', price: '₹799', type: 'Voucher', icon: 'https://html-generator.com/uploads/images/2021/12/12/69338PCBY_LHZ1K.png' },
             ];
 
             function populateItems() {
                 itemGrid.innerHTML = '';
-                itemsData.forEach(item => {
+                itemsData.forEach((item, index) => {
                     const itemBox = document.createElement('div');
                     itemBox.className = 'item-box p-2 rounded-lg text-center cursor-pointer transition-all';
-                    itemBox.dataset.name = item.name;
-                    itemBox.dataset.price = item.price;
-                    itemBox.dataset.link = item.link;
+                    itemBox.dataset.index = index;
                     itemBox.innerHTML = `
                         <img src="${item.icon}" class="h-8 mx-auto mb-1">
                         <p class="font-semibold text-xs text-glow">${item.name.replace('Diamond', '').replace('Membership', '')}</p>
@@ -288,14 +329,62 @@
                             box.classList.add('selected');
                             selectedItem = box;
                             
-                            footerProductName.textContent = box.dataset.name;
-                            footerProductPrice.textContent = box.dataset.price;
-                            buyNowLink.href = box.dataset.link;
+                            const itemData = itemsData[box.dataset.index];
+                            footerProductName.textContent = itemData.displayName;
+                            footerProductPrice.textContent = `Total: ${itemData.price}`;
+                            footerProductIcon.src = itemData.icon;
+                            buyNowBtn.dataset.index = box.dataset.index;
                             stickyFooter.style.transform = 'translateY(0)';
                         }
                     });
                 });
             }
+
+            function showPaymentModal(item) {
+                const date = new Date();
+                const orderId = `GNA-${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,'0')}${date.getDate().toString().padStart(2,'0')}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+                const amount = item.price.replace('₹', '').replace(',', '');
+                const upiString = `upi://pay?pa=keyapaul@fifederal&pn=Gshopindia&am=${amount}&cu=INR&tn=${orderId}`;
+                
+                orderDetails.innerHTML = `
+                    <div class="flex justify-between"><span class="text-gray-400">Order ID:</span> <span class="font-mono">${orderId}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400">Player ID:</span> <span class="font-mono">${loggedInPlayerId}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400">Item:</span> <span class="font-bold">${item.displayName}</span></div>
+                    <div class="flex justify-between text-lg mt-2 pt-2 border-t border-[var(--primary-glow)]/20"><span class="text-gray-400">Total:</span> <span class="font-bold text-[var(--primary-glow)]">${item.price}</span></div>
+                `;
+
+                qrcodeContainer.innerHTML = ''; // Clear previous QR code
+                new QRCode(qrcodeContainer, { text: upiString, width: 180, height: 180 });
+
+                paymentModal.classList.remove('hidden');
+                startPaymentTimer();
+            }
+
+            function startPaymentTimer() {
+                let duration = 300; // 5 minutes
+                clearInterval(paymentTimerInterval);
+                paymentTimerInterval = setInterval(() => {
+                    const minutes = Math.floor(duration / 60).toString().padStart(2, '0');
+                    const seconds = (duration % 60).toString().padStart(2, '0');
+                    paymentTimerDisplay.textContent = `${minutes}:${seconds}`;
+                    if (--duration < 0) {
+                        clearInterval(paymentTimerInterval);
+                        paymentModal.classList.add('hidden');
+                        showMessage('Payment session expired.');
+                    }
+                }, 1000);
+            }
+
+            buyNowBtn.addEventListener('click', () => {
+                const itemIndex = buyNowBtn.dataset.index;
+                if (itemIndex) {
+                    showPaymentModal(itemsData[itemIndex]);
+                }
+            });
+            closePaymentModalBtn.addEventListener('click', () => {
+                clearInterval(paymentTimerInterval);
+                paymentModal.classList.add('hidden');
+            });
 
 
             function showMessage(text, duration = 2000) {
@@ -316,6 +405,7 @@
                 const validPlayerId = /^\d{10}$/;
                 if (validPlayerId.test(playerId)) {
                     playLoginSound();
+                    loggedInPlayerId = playerId;
                     loginError.classList.add('hidden');
                     loginModal.classList.add('hidden');
                     gameSelection.classList.add('hidden');
@@ -357,6 +447,7 @@
                 stickyFooter.style.transform = 'translateY(100%)';
                 userIconContainer.innerHTML = defaultUserIconHTML; 
                 playerIdInput.value = '';
+                loggedInPlayerId = null;
             }
 
             // Carousel Logic
